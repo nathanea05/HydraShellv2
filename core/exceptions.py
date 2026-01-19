@@ -6,3 +6,6 @@
 # Local Imports
 
 
+class RegistrationError(Exception):
+    """Raised when an error occurs during command registration (init)"""
+

@@ -5,6 +5,7 @@
 
 # Local Imports
 from core.session import Session
+from core.init import init
 from repl.repl import REPL
 from repl.exceptions import InvalidCommand, ParseError
 
@@ -12,6 +13,8 @@ from repl.exceptions import InvalidCommand, ParseError
 def main() -> None:
     """Main entrypoint for the program"""
     session = Session()
+    init(session)
+
     while True:
         try:
             repl = REPL(session)

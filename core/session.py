@@ -22,7 +22,7 @@ class Session:
     - Stores context
     """
     general_registry: CommandRegistry = field(default_factory=CommandRegistry)
-    heads: Dict[str, Head] = field(default_factory=dict) # REDUNDANT w/ context.active_head
+    heads: Dict[str, Head] = field(default_factory=dict)
     active_head: Optional[Head] = field(default_factory=Head)
     context: Optional[Context] = field(default_factory=Context)
     history: Optional[History] = field(default_factory=History)

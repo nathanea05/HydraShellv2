@@ -68,7 +68,7 @@ class REPL:
         self._command_prompt()
         if not self.line:
             return
-        self._parse()
-        self._resolve_command()
-        self._validate_command()
-        self.command.execute()
+        parsed_command = self._parse()
+        command = self._resolve_command()
+        validated = self._validate_command()
+        self.command.execute(parsed_command)
