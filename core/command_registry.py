@@ -14,7 +14,6 @@ class CommandRegistry:
     """
     Contains all commands
     """
-    id: Optional[int] = field(default=int)
     commands: Optional[Dict[str, Command]] = field(default_factory=dict)
     aliases: Optional[Dict[str, Alias]] = field(default_factory=dict)
 

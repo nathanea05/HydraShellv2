@@ -19,7 +19,7 @@ class Command:
     help: str = field(init=False, default="")
 
 
-    def execute(self, parsed_command: ParsedCommand) -> None:
+    def execute(self, session, parsed_command: ParsedCommand) -> None:
         raise NotImplementedError
 
 

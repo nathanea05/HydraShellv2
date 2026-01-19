@@ -38,7 +38,7 @@ class REPL:
             else:
                 base_prompt = f"{base_prompt}\\{active_head.name}"
 
-            head_prompt = getattr(active_head.context, "prompt", None)
+            head_prompt = active_head.context.get_prompt()
             if head_prompt:
                 base_prompt = f"{base_prompt}\\{head_prompt}"
 
@@ -55,20 +55,20 @@ class REPL:
         self.parsed_command = parsed_command
         return parsed_command
     
-    def _resolve_command(self) -> tuple[Command, int]:
-        """Locates the parsed command in the registry. Returns command and the id of the registry where it was located"""
+    def _resolve_command(self) -> tuple[Command, bool]:
+        """Locates the parsed command in the registry. Returns command and true if found in general_registry"""
         # Check general registry first
         command = self.session.general_registry.resolve_parsed(self.parsed_command)
         if command:
             self.command = command
-            return command, self.session.general_registry.id
+            return command, True
         
         # Check active head
         if self.session.active_head:
             command = self.session.active_head.registry.resolve_parsed(self.parsed_command)
             if command:
                 self.command = command
-                return command, self.session.active_head.registry.id
+                return command, False
         
         # Command does not exist
         raise InvalidCommand("Command does not exist.")
@@ -92,16 +92,18 @@ class REPL:
         # VALIDATE ARGS
         if parsed_command.args and not command.args:
             raise InvalidCommand(f"Command '{command.name}' does not accept args.")
-        for arg in parsed_command.args:
-            if not arg in command.args:
-                raise InvalidCommand(f"Invalid arg '{arg}' for command '{command.name}'")
+        if command.args and not "*" in command.args:
+            for arg in parsed_command.args:
+                if not arg in command.args:
+                    raise InvalidCommand(f"Invalid arg '{arg}' for command '{command.name}'")
             
         # VALIDATE KWARGS
         if parsed_command.kwargs and not command.kwargs:
             raise InvalidCommand(f"Command '{command.name}' does not accept kwargs.")
-        for kwarg in parsed_command.kwargs:
-            if not kwarg in command.kwargs:
-                raise InvalidCommand(f"Invalid kwarg '{kwarg}' for command '{command.name}'")
+        if command.kwargs and not "*" in command.kwargs:
+            for kwarg in parsed_command.kwargs:
+                if not kwarg in command.kwargs:
+                    raise InvalidCommand(f"Invalid kwarg '{kwarg}' for command '{command.name}'")
 
 
     def run(self) -> None:
@@ -109,6 +111,6 @@ class REPL:
         if not self.line:
             return
         parsed_command = self._parse()
-        command, reg_id = self._resolve_command()
+        command, is_general_cmd = self._resolve_command()
         self._validate_command(self.session, parsed_command, command)
         command.execute(self.session, parsed_command)

@@ -13,3 +13,6 @@ env/
 
 # OS junk
 .DS_Store
+
+# head folders
+plugins/

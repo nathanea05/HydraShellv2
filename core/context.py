@@ -15,4 +15,10 @@ class Context:
 
     - Builds the terminal prompt
     """
-    prompt = ""
+
+
+    def exit():
+        pass
+
+    def get_prompt():
+        pass

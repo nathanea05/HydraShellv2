@@ -31,3 +31,13 @@ class Session:
     def remove_active_head(self):
         """Sets active head to None"""
         self.active_head = None
+
+    def add_head(self, head: Head):
+        """Adds a head to the session.heads attribute"""
+        self.heads[head.name] = head
+
+    def set_active_head(self, head_name):
+        """Sets the active head"""
+        head_name = head_name.strip().lower()
+        head = self.heads.get(head_name)
+        self.active_head = head
