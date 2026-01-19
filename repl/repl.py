@@ -33,7 +33,7 @@ class REPL:
         parsed_command = parse_command(self.line)
         self.session.history.command_history.add_parsed_command_history(parsed_command)
         self.parsed_command = parsed_command
-        return ParsedCommand
+        return parsed_command
     
     def _resolve_command(self) -> Command:
         """Locates the parsed command in the registry"""
@@ -53,15 +53,28 @@ class REPL:
         raise InvalidCommand("Command does not exist.")
         
 
-    def _validate_command(self) -> bool:
+    def _validate_command(self, parsed_command: ParsedCommand, command: Command) -> bool:
         """Ensures parsed command is able to be executed"""
+        # VALIDATE CONTEXT REQUIREMENTS
+        
 
-        # are arguments valid
 
-        # is user authorized
+        # VALIDATE USER AUTHORIZATION
 
-        # are context requirements met
-        pass
+
+        # VALIDATE ARGS
+        if parsed_command.args and not command.args:
+            raise InvalidCommand(f"Command '{command.name}' does not accept args.")
+        for arg in parsed_command.args:
+            if not arg in command.args:
+                raise InvalidCommand(f"Invalid arg '{arg}' for command '{command.name}'")
+            
+        # VALIDATE KWARGS
+        if parsed_command.kwargs and not command.kwargs:
+            raise InvalidCommand(f"Command '{command.name}' does not accept kwargs.")
+        for kwarg in parsed_command.kwargs:
+            if not kwarg in command.kwargs:
+                raise InvalidCommand(f"Invalid kwarg '{kwarg}' for command '{command.name}'")
 
 
     def run(self) -> None:
@@ -70,5 +83,5 @@ class REPL:
             return
         parsed_command = self._parse()
         command = self._resolve_command()
-        validated = self._validate_command()
-        self.command.execute(parsed_command)
+        self._validate_command(parsed_command, command)
+        command.execute(self.session, parsed_command)

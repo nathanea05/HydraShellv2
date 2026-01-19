@@ -3,6 +3,7 @@
 # Library Imports
 from dataclasses import dataclass, field
 from logging import log
+from pprint import pprint
 
 # Local Imports
 from repl.exceptions import CancelOperation
@@ -23,9 +24,6 @@ class IO:
             normalized_response = response.strip().lower()
             if normalized_response == "cancel":
                 raise CancelOperation("Operation cancelled by User")
-            if normalized_response == "quit":
-                print("Goodbye!")
-                quit()
             if required and not response:
                 print("Invalid Input. Input is required")
                 continue
@@ -59,3 +57,11 @@ class IO:
     def warn(self, message: str) -> None:
         """Prints a warning to the terminal"""
         print(f"[WARN] {message}")
+
+    def write(self, message: str) -> None:
+        """Prints a message to the terminal"""
+        print(message)
+
+    def pwrite(self, message: str) -> None:
+        """Prints a formatted message to the terminal (pprint)"""
+        pprint(message)

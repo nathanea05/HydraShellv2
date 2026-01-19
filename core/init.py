@@ -12,6 +12,10 @@ from core.exceptions import RegistrationError
 from core.command import Command, Alias
 
 
+GENERAL_COMMANDS_PKG = "general_commands"
+PLUGINS_FOLDER = "plugins"
+
+
 def _register_pkg(session: Session, registry: CommandRegistry, package: str):
     """Registers the commands in a package to the active registry"""
 
@@ -63,11 +67,11 @@ def _register_pkg(session: Session, registry: CommandRegistry, package: str):
             registry.register_alias(alias)
 
 
-
-
 def init(session: Session):
     """Initialize the session"""
-    general_commands_pkg = "general_commands"
 
     # Register general commands
-    _register_pkg(session, session.general_registry, general_commands_pkg)
+    _register_pkg(session, session.general_registry, GENERAL_COMMANDS_PKG)
+
+    # Register plugin commands
+    

@@ -5,20 +5,20 @@ from dataclasses import dataclass, field
 from typing import Sequence
 
 # Local Imports
-from repl.exceptions import NotImplementedError
+from core.exceptions import NotImplementedError
+from repl.parse_command import ParsedCommand
 
 
 @dataclass
 class Command:
     name: str = field(init=False)
-    description: str = field(init=False)
-    args: Sequence[str] = field(init=False, default_factory=tuple)
-    kwargs: Sequence[str] = field(init=False, default_factory=tuple)
-    flags: Sequence[str] = field(init=False, default_factory=tuple)
+    description: str = field(init=False, default="")
+    args: list = field(init=False)
+    kwargs: dict = field(init=False)
     help: str = field(init=False, default="")
 
 
-    def execute(self) -> None:
+    def execute(self, parsed_command: ParsedCommand) -> None:
         raise NotImplementedError
 
 

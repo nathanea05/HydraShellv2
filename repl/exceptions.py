@@ -14,8 +14,5 @@ class CancelOperation(Exception):
 class InvalidCommand(Exception):
     """Raised when a user inputs an Invalid Command"""
 
-class NotImplementedError(Exception):
-    """Raised when a command has not been implemented"""
-
 class ParseError(Exception):
     """Raised when a command fails to parse"""

@@ -45,7 +45,7 @@ def parse_command(line: str) -> ParsedCommand:
 
         if tok.startswith("--"):
             seen_kwarg = True
-            key = tok[2:].strip()
+            key = tok[2:].strip().lower()
 
             if not key:
                 raise ParseError("Invalid kwarg: '--' must be followed by a name")
