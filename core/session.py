@@ -23,7 +23,11 @@ class Session:
     """
     general_registry: CommandRegistry = field(default_factory=CommandRegistry)
     heads: Dict[str, Head] = field(default_factory=dict)
-    active_head: Optional[Head] = field(default_factory=Head)
+    active_head: Optional[Head] = None
     context: Optional[Context] = field(default_factory=Context)
     history: Optional[History] = field(default_factory=History)
     io: Optional[IO] = field(default_factory=IO)
+
+    def remove_active_head(self):
+        """Sets active head to None"""
+        self.active_head = None

@@ -8,7 +8,11 @@ from typing import Optional
 from core.session import Session
 from core.command import Command
 from repl.parse_command import parse_command, ParsedCommand
-from repl.exceptions import CancelOperation, InvalidCommand
+from repl.exceptions import MissingContext, InvalidCommand
+
+
+DEFAULT_PROMPT = "Hydrashell"
+CONDENSED_PROMPT = "≽≽≽"
 
 
 @dataclass
@@ -22,7 +26,23 @@ class REPL:
 
     def _command_prompt(self) -> str:
         """Prompts for command and logs response"""
-        prompt = self.session.context.get_prompt()
+
+        base_prompt = DEFAULT_PROMPT
+        if self.session.active_head:
+            base_prompt = CONDENSED_PROMPT
+            active_head = self.session.active_head
+
+            display_name = getattr(active_head, "display_name", None)
+            if display_name:
+                base_prompt = f"{base_prompt}\\{display_name}"
+            else:
+                base_prompt = f"{base_prompt}\\{active_head.name}"
+
+            head_prompt = getattr(active_head.context, "prompt", None)
+            if head_prompt:
+                base_prompt = f"{base_prompt}\\{head_prompt}"
+
+        prompt = f"{base_prompt}> "
         line = self.session.io.safe_input(prompt)
         self.session.history.command_history.add_raw_command_history(line)
         self.line = line
@@ -35,31 +55,38 @@ class REPL:
         self.parsed_command = parsed_command
         return parsed_command
     
-    def _resolve_command(self) -> Command:
-        """Locates the parsed command in the registry"""
+    def _resolve_command(self) -> tuple[Command, int]:
+        """Locates the parsed command in the registry. Returns command and the id of the registry where it was located"""
         # Check general registry first
         command = self.session.general_registry.resolve_parsed(self.parsed_command)
         if command:
             self.command = command
-            return command
+            return command, self.session.general_registry.id
         
         # Check active head
-        command = self.session.active_head.registry.resolve_parsed(self.parsed_command)
-        if command:
-            self.command = command
-            return command
+        if self.session.active_head:
+            command = self.session.active_head.registry.resolve_parsed(self.parsed_command)
+            if command:
+                self.command = command
+                return command, self.session.active_head.registry.id
         
         # Command does not exist
         raise InvalidCommand("Command does not exist.")
         
 
-    def _validate_command(self, parsed_command: ParsedCommand, command: Command) -> bool:
+    def _validate_command(self, session: Session, parsed_command: ParsedCommand, command: Command) -> bool:
         """Ensures parsed command is able to be executed"""
         # VALIDATE CONTEXT REQUIREMENTS
-        
+        if session.active_head:
+            ctx = getattr(self.session.active_head, "context", None)
+            if ctx:
+                for req in command.required_context:
+                    if not getattr(ctx, req, None):
+                        raise MissingContext(f"Cannot execute command. Missing required context: '{req}'.")
 
 
         # VALIDATE USER AUTHORIZATION
+        """Coming soon!"""
 
 
         # VALIDATE ARGS
@@ -82,6 +109,6 @@ class REPL:
         if not self.line:
             return
         parsed_command = self._parse()
-        command = self._resolve_command()
-        self._validate_command(parsed_command, command)
+        command, reg_id = self._resolve_command()
+        self._validate_command(self.session, parsed_command, command)
         command.execute(self.session, parsed_command)

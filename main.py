@@ -7,7 +7,8 @@
 from core.session import Session
 from core.init import init
 from repl.repl import REPL
-from repl.exceptions import InvalidCommand, ParseError
+from repl.exceptions import InvalidCommand, ParseError, MissingContext
+
 
 
 def main() -> None:
@@ -24,6 +25,9 @@ def main() -> None:
             session.io.warn(e)
 
         except ParseError as e:
+            session.io.warn(e)
+
+        except MissingContext as e:
             session.io.warn(e)
 
 

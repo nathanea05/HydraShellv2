@@ -70,8 +70,12 @@ def _register_pkg(session: Session, registry: CommandRegistry, package: str):
 def init(session: Session):
     """Initialize the session"""
 
+    i = 0
+
     # Register general commands
     _register_pkg(session, session.general_registry, GENERAL_COMMANDS_PKG)
+    session.general_registry.id = i
+    i += 1
 
     # Register plugin commands
     

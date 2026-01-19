@@ -15,6 +15,7 @@ class Command:
     description: str = field(init=False, default="")
     args: list = field(init=False)
     kwargs: dict = field(init=False)
+    required_context: set = field(init=False, default=set)
     help: str = field(init=False, default="")
 
 

@@ -7,9 +7,9 @@ from core.session import Session
 from repl.parse_command import ParsedCommand
 
 
-def _end() -> None:
+def _end(session: Session) -> None:
     """Exits out of the current head to return to hydrashell home"""
-    pass
+    session.remove_active_head()
 
 
 class End(Command):
@@ -18,8 +18,9 @@ class End(Command):
     description = "Exits out of the current head to return to Hydrashell home"
     args = None
     kwargs = None
+    required_context = {}
     help = ""
 
     def execute(self, session: Session, parsed_command: ParsedCommand):
-        _end()
+        _end(session)
         return

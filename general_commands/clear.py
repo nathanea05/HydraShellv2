@@ -18,6 +18,7 @@ class Clear(Command):
     description = "clears the terminal"
     args = None
     kwargs = None
+    required_context = {}
     help = ""
 
     def execute(self, session: Session, parsed_command: ParsedCommand):

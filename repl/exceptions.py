@@ -16,3 +16,6 @@ class InvalidCommand(Exception):
 
 class ParseError(Exception):
     """Raised when a command fails to parse"""
+
+class MissingContext(Exception):
+    """Raised when a command is missing context"""

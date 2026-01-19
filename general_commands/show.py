@@ -11,15 +11,18 @@ def _show(session: Session, parsed_command: ParsedCommand):
     """Command to show information about the current session"""
     if "registry" in parsed_command.args:
         session.io.pwrite(session.general_registry)
+    if "heads" in parsed_command.args:
+        session.io.pwrite(session.heads)
 
 
 class Show(Command):
     """Command to display information about the current session"""
     name = "show"
     description = "Displays information about the current session"
-    args = {"registry"}
+    args = {"registry", "heads"}
     kwargs = None
     help = ""
+    required_context = {}
 
     def execute(self, session: Session, parsed_command: ParsedCommand):
         _show(session, parsed_command)

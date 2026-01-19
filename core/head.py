@@ -18,6 +18,7 @@ class Head:
     - Command Registry
     - Context Tree
     """
+    id: Optional[str] = field(default=int)
     name: Optional[str] = field(default_factory=str)
     registry: Optional[CommandRegistry] = field(default_factory=CommandRegistry)
     context: Optional[Context] = field(default_factory=Context)
