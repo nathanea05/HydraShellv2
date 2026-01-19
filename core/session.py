@@ -18,11 +18,11 @@ class Session:
     The global HydraShell session.
 
     - Tracks current user
-    - Stores command registry
+    - Stores heads/command registries
     - Stores context
     """
     general_registry: CommandRegistry = field(default_factory=CommandRegistry)
-    heads: Dict[str, Head] = field(default_factory=dict)
+    heads: Dict[str, Head] = field(default_factory=dict) # REDUNDANT w/ context.active_head
     active_head: Optional[Head] = field(default_factory=Head)
     context: Optional[Context] = field(default_factory=Context)
     history: Optional[History] = field(default_factory=History)

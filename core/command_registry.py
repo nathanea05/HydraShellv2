@@ -17,7 +17,7 @@ class CommandRegistry:
     commands: Optional[Dict] = field(default_factory=dict)
     aliases: Optional[Dict] = field(default_factory=dict)
 
-    def get_command(self, parsed_command: ParsedCommand) -> Command:
+    def resolve_parsed(self, parsed_command: ParsedCommand) -> Command:
         """Searches for a command based on ParsedCommand object"""
         # Look for and unpack alias
 

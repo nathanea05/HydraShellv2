@@ -6,6 +6,7 @@ from typing import Optional
 
 # Local Imports
 from core.command_registry import CommandRegistry
+from core.context import Context
 
 
 @dataclass
@@ -19,6 +20,7 @@ class Head:
     """
     name: Optional[str] = field(default_factory=str)
     registry: Optional[CommandRegistry] = field(default_factory=CommandRegistry)
+    context: Optional[Context] = field(default_factory=Context)
 
     # Metadata
     display_name: Optional[str] = None

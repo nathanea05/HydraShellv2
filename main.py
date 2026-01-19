@@ -6,7 +6,7 @@
 # Local Imports
 from core.session import Session
 from repl.repl import REPL
-from core.exceptions import InvalidCommand
+from repl.exceptions import InvalidCommand, ParseError
 
 
 def main() -> None:
@@ -16,7 +16,11 @@ def main() -> None:
         try:
             repl = REPL(session)
             repl.run()
+
         except InvalidCommand as e:
+            session.io.warn(e)
+
+        except ParseError as e:
             session.io.warn(e)
 
 

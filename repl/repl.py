@@ -8,7 +8,7 @@ from typing import Optional
 from core.session import Session
 from core.command import Command
 from repl.parse_command import parse_command, ParsedCommand
-from core.exceptions import CancelOperation, InvalidCommand
+from repl.exceptions import CancelOperation, InvalidCommand
 
 
 @dataclass
@@ -35,16 +35,16 @@ class REPL:
         self.parsed_command = parsed_command
         return ParsedCommand
     
-    def _retrieve_command(self) -> Command:
+    def _resolve_command(self) -> Command:
         """Locates the parsed command in the registry"""
         # Check general registry first
-        command = self.session.general_registry.get_command(self.parsed_command)
+        command = self.session.general_registry.resolve_parsed(self.parsed_command)
         if command:
             self.command = command
             return command
         
         # Check active head
-        command = self.session.active_head.registry.get_command(self.parsed_command)
+        command = self.session.active_head.registry.resolve_parsed(self.parsed_command)
         if command:
             self.command = command
             return command
@@ -53,7 +53,6 @@ class REPL:
         raise InvalidCommand("Command does not exist.")
         
 
-    
     def _validate_command(self) -> bool:
         """Ensures parsed command is able to be executed"""
 
@@ -66,16 +65,10 @@ class REPL:
 
 
     def run(self) -> None:
-        
-        # Read
         self._command_prompt()
         if not self.line:
             return
-        
-        # Parse
         self._parse()
-
-        # Validate
-        self._retrieve_command()
+        self._resolve_command()
         self._validate_command()
-        print(self.session.history.command_history.raw_commands)
+        self.command.execute()

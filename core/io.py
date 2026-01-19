@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from logging import log
 
 # Local Imports
-from core.exceptions import CancelOperation
+from repl.exceptions import CancelOperation
 
 
 @dataclass
