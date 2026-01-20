@@ -25,6 +25,6 @@ class Command:
 
 @dataclass
 class Alias:
-    command: str = field(init=False)
+    name: str = field(init=False)
     description: str = field(init=False)
     executes: str = field(init=False)

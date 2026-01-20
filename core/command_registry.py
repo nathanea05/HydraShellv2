@@ -6,7 +6,7 @@ from typing import Optional, Dict
 
 # Local Imports
 from core.command import Command, Alias
-from repl.parse_command import ParsedCommand
+from repl.parse_command import parse_command, ParsedCommand
 
 
 @dataclass
@@ -22,20 +22,53 @@ class CommandRegistry:
 
     def resolve_parsed(self, parsed_command: ParsedCommand) -> Command:
         """Searches for a command based on ParsedCommand object"""
-        # Look for and unpack alias
-        base_command = parsed_command.command
 
+
+        # Look for and unpack alias
         while True:
+            base_command = parsed_command.command
+            args = parsed_command.args
             alias = self.aliases.get(base_command, None)
-            if alias:
-                base_command = alias.executes
+            if not alias:
+                break
+
+            expanded = (alias.executes or "").strip().lower()
+            if not expanded:
+                break
+
+            if expanded:
+                parsed_command = parse_command(expanded)
+                expanded = None
                 continue
+
             break
 
+
         # Look for command
-        command = self.commands.get(base_command, None)
-        if command:
-            return command
+        found_command = None
+        consumed = 0
+
+        for k in range(len(args), 0, -1):
+            key = f"{base_command} {' '.join(args[:k])}".strip().lower()
+            cmd = self.commands.get(key)
+            if cmd:
+                found_command = cmd
+                consumed = k
+                break
+
+
+        if not found_command:
+            found_command = self.commands.get(base_command, None)
+            consumed = 0
+        if not found_command:
+            return found_command, parsed_command
+
+        # Update parsed command
+        remaining_args = args[consumed:]
+        parsed_command.command = found_command.name
+        parsed_command.args = remaining_args
+
+        return found_command, parsed_command
         
     
     def register_command(self, command: Command) -> bool:

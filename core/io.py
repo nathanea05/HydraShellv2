@@ -9,6 +9,10 @@ from pprint import pprint
 from repl.exceptions import CancelOperation
 
 
+TERMINAL_WIDTH = 80
+FILLER = "#"
+
+
 @dataclass
 class IO:
     """Class to manage all input/output functions"""
@@ -58,10 +62,35 @@ class IO:
         """Prints a warning to the terminal"""
         print(f"[WARN] {message}")
 
-    def write(self, message: str) -> None:
-        """Prints a message to the terminal"""
-        print(message)
 
-    def pwrite(self, message: str) -> None:
+    def _write_title(self, title: str):
+        total_filler = TERMINAL_WIDTH - len(title)
+        total_filler -= 2
+        half_filler = (total_filler / 2)
+        half_filler = int(half_filler)
+        print(f"\n\n{FILLER * half_filler} {title} {FILLER * half_filler}\n")
+
+    
+    def _write_footer(self):
+        print("\n")
+        print(FILLER * TERMINAL_WIDTH)
+        print("\n")
+
+
+    def write(self, message: str = None, footer: bool = False) -> None:
+        """Prints a message to the terminal"""
+        if message:
+            print(message)
+        if footer:
+            self._write_footer()
+
+
+    def pwrite(self, message: str, title: str = None, footer: bool = False) -> None:
         """Prints a formatted message to the terminal (pprint)"""
+        if title:
+            self._write_title(title)
+
         pprint(message)
+
+        if footer:
+            self._write_footer()

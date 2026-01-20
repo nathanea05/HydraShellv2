@@ -72,7 +72,7 @@ def _search_directory(session: Session, directory: str) -> _DirectoryData:
                     except Exception as e:
                         session.io.warn(f"Failed to instantiate '{alias_cls.__name__}' from '{modinfo.name}': {e}")
                         continue
-                    directory_data.aliases.append(obj)
+                    directory_data.aliases.append(alias)
 
                 if issubclass(obj, Context):
                     ctx_cls: Type[Context] = obj

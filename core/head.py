@@ -26,3 +26,9 @@ class Head:
     display_name: Optional[str] = None
     author: Optional[str] = None
     path: Optional[str] = None
+
+    def get_name(self):
+        """Returns name or display name if set"""
+        if self.display_name:
+            return self.display_name
+        return self.name

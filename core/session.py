@@ -10,6 +10,7 @@ from core.head import Head
 from core.history import History
 from core.io import IO
 from core.command_registry import CommandRegistry
+from core.services import Services
 
 
 @dataclass
@@ -27,6 +28,7 @@ class Session:
     context: Optional[Context] = field(default_factory=Context)
     history: Optional[History] = field(default_factory=History)
     io: Optional[IO] = field(default_factory=IO)
+    services: Optional[Services] = field(default_factory=Services)
 
     def remove_active_head(self):
         """Sets active head to None"""
@@ -36,8 +38,10 @@ class Session:
         """Adds a head to the session.heads attribute"""
         self.heads[head.name] = head
 
-    def set_active_head(self, head_name):
+    def set_active_head(self, head):
         """Sets the active head"""
-        head_name = head_name.strip().lower()
-        head = self.heads.get(head_name)
+        if not head:
+            return
+        if head == self.active_head:
+            return
         self.active_head = head

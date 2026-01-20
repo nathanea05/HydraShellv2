@@ -17,6 +17,8 @@ class _HeadHistory:
 
     def add_history(self, head: Head):
         """Adds a head to the history"""
+        if not head:
+            return
         self.head_stack.append(head.name)
         self.total_history.append(head.name)
 
@@ -43,5 +45,5 @@ class _CommandHistory:
 @dataclass
 class History:
     """Tracks session, context, and command history"""
-    head_history: Optional[_HeadHistory] = field(default_factory=_HeadHistory)
-    command_history: Optional[_CommandHistory] = field(default_factory=_CommandHistory)
+    head: Optional[_HeadHistory] = field(default_factory=_HeadHistory)
+    command: Optional[_CommandHistory] = field(default_factory=_CommandHistory)
