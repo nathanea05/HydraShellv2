@@ -8,6 +8,7 @@ from core.session import Session
 from core.init import init
 from repl.repl import REPL
 from repl.exceptions import InvalidCommand, ParseError, MissingContext
+from core.exceptions import NotImplementedError, ContextImplementationError
 
 
 
@@ -29,6 +30,13 @@ def main() -> None:
 
         except MissingContext as e:
             session.io.warn(e)
+
+        except NotImplementedError as e:
+            session.io.warn(e)
+
+        except ContextImplementationError as e:
+            session.io.warn(e)
+            session.remove_active_head()
 
 
 if __name__ == "__main__":

@@ -20,7 +20,7 @@ class Command:
 
 
     def execute(self, session, parsed_command: ParsedCommand) -> None:
-        raise NotImplementedError
+        raise NotImplementedError("Developer Error: Command has not been implemented.")
 
 
 @dataclass

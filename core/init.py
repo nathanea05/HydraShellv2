@@ -103,7 +103,7 @@ def _initialize_head(session: Session, directory: str):
 
     # Register Metadata
     metadata = directory_data.metadata
-    head.name = os.path.split(directory)[1]
+    head.name = str(os.path.split(directory)[1]).strip().lower()
     head.author = metadata.author
     head.display_name = metadata.display_name
 

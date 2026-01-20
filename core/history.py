@@ -17,9 +17,10 @@ class _HeadHistory:
 
     def add_history(self, head: Head):
         """Adds a head to the history"""
-        pass
+        self.head_stack.append(head.name)
+        self.total_history.append(head.name)
 
-    def go_back(self):
+    def back(self):
         """Returns to the previous head"""
         pass
 
@@ -36,7 +37,8 @@ class _CommandHistory:
 
     def add_parsed_command_history(self, parsed_command: ParsedCommand):
         """Adds a parsed command to the command history"""
-        pass
+        self.parsed_commands.append(parsed_command)
+
 
 @dataclass
 class History:

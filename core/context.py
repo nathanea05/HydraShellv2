@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from typing import Optional, List
 
 # Local Imports
-
+from core.exceptions import ContextImplementationError
 
 
 @dataclass
@@ -16,9 +16,9 @@ class Context:
     - Builds the terminal prompt
     """
 
+    def get_prompt(self):
+        raise ContextImplementationError("Developer Error: get_prompt not implemented for this head")
+    
 
-    def exit():
-        pass
-
-    def get_prompt():
-        pass
+    def exit(self):
+        raise ContextImplementationError("Developer Error: exit not implemented for this head. Use 'end' to return to Hydrashell root")

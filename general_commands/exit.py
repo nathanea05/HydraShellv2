@@ -5,11 +5,15 @@
 from core.command import Command
 from core.session import Session
 from repl.parse_command import ParsedCommand
+from repl.exceptions import InvalidCommand
 
 
 def _exit(session: Session, parsed_command: ParsedCommand):
     """Exits one level in the context heirarchy"""
-    session.active_head.context.exit()
+    if session.active_head:
+        session.active_head.context.exit()
+        return
+    raise InvalidCommand("Cannot exit any further")
 
 
 class Cmd(Command):
