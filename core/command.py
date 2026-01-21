@@ -30,7 +30,7 @@ class Command:
     name: str = field(init=False)
     description: str = field(init=False, default="")
     args: dict[str, Arg] = field(init=False)
-    kwargs: dict[str, Arg] = field(init=False)
+    kwargs: dict[str, Kwarg] = field(init=False)
     required_context: set = field(default_factory=set)
     help: str = field(init=False, default="")
 

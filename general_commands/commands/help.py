@@ -58,7 +58,7 @@ def _help(session: Session, parsed_command: ParsedCommand):
 class Help(Command):
     """Docstring for Cmd"""
     name = "help"
-    description = ""
+    description = "Displays the Hydrashell help menu"
     args = None
     kwargs = None
     required_context = {}

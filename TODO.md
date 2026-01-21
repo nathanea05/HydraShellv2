@@ -1,8 +1,9 @@
 # Priorities
 
 -Implement arg/kwarg aliases
--Argument grouping
 -Allow aliases to be used with args
+
+-Argument grouping
 -Database w/ sqlite and sqlalchemy (session.services.database)
 -Implement more strict context controls (disallowed context)
 
@@ -15,4 +16,5 @@
 
 # Long Term
 
+-Implement task scheduling
 -User authorization/SSO

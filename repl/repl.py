@@ -9,7 +9,8 @@ from core.session import Session
 from core.command import Command
 from core.build_help import build_help
 from repl.parse_command import parse_command, ParsedCommand
-from repl.exceptions import MissingContext, InvalidCommand
+from repl.exceptions import InvalidCommand, ParseError, MissingContext
+from core.exceptions import NotImplementedError, ContextImplementationError
 
 
 DEFAULT_PROMPT = "Hydrashell"
@@ -48,8 +49,13 @@ class REPL:
                 base_prompt = f"{base_prompt}\\{head_prompt}"
 
         prompt = f"{base_prompt}> "
+
         line = self.session.io.safe_input(prompt)
         self.session.history.command.add_raw_command_history(line)
+        
+        if line is None:
+            return None
+        line = line.strip()
         return line
     
     def _resolve_command(self, parsed_command: ParsedCommand) -> _ResolvedCommand:
@@ -130,29 +136,50 @@ class REPL:
 
     def run(self) -> None:
         """Runs the REPL"""
+        while True:
+            # Read
+            try:
+                line = self._command_prompt()
+                if not line:
+                    continue
+                
+                # Parse
+                parsed_command = parse_command(line)
 
-        # Read
-        line = self._command_prompt()
-        if not line:
-            return
-        
-        # Parse
-        parsed_command = parse_command(line)
+                # Resolve
+                resolved_command = self._resolve_command(parsed_command)
 
-        # Resolve
-        resolved_command = self._resolve_command(parsed_command)
+                # Log
+                self.session.history.command.add_raw_command_history(line)
+                self.session.history.command.add_parsed_command_history(parsed_command)
 
-        # Log
-        self.session.history.command.add_raw_command_history(line)
-        self.session.history.command.add_parsed_command_history(parsed_command)
+                # Validate
+                validated = self._validate_command(self.session, resolved_command.parsed_command, resolved_command.command)
 
-        # Validate
-        validated = self._validate_command(self.session, resolved_command.parsed_command, resolved_command.command)
+                # Execute
+                if validated:
+                    if "help" in resolved_command.parsed_command.kwargs:
+                        help_message = build_help(resolved_command.command)
+                        self.session.io.write(help_message)
+                    else:
+                        resolved_command.command.execute(self.session, parsed_command)
 
-        # Execute
-        if validated:
-            if "help" in resolved_command.parsed_command.kwargs:
-                help_message = build_help(resolved_command.command)
-                self.session.io.write(help_message)
-            else:
-                resolved_command.command.execute(self.session, parsed_command)
+
+            except InvalidCommand as e:
+                self.session.io.warn(e)
+
+            except ParseError as e:
+                self.session.io.warn(e)
+
+            except MissingContext as e:
+                self.session.io.warn(e)
+
+            except NotImplementedError as e:
+                self.session.io.warn(e)
+
+            except ContextImplementationError as e:
+                self.session.io.warn(e)
+                self.session.remove_active_head()
+
+            except EOFError:
+                quit()

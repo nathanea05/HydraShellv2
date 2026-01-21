@@ -6,6 +6,7 @@ from core.command import Command, Arg, Kwarg
 from core.session import Session
 from repl.parse_command import ParsedCommand
 from repl.exceptions import InvalidCommand
+from general_commands.commands.show.args import All, ActiveHead, Detail
 
 
 def _show_registry(session: Session, parsed_command: ParsedCommand):
@@ -30,22 +31,7 @@ def _show_registry(session: Session, parsed_command: ParsedCommand):
     session.io.pwrite(session.general_registry, title="General Command Registry", footer=True)
 
 
-class All(Kwarg):
-    name = "all"
-    description = "Displays the registry for all heads and the gerneral registry"
-    aliases = {"a"}
 
-
-class ActiveHead(Kwarg):
-    name = "active-head"
-    description = "Displays the registry for only the active head"
-    aliases = {"ah"}
-
-
-class Detail(Kwarg):
-    name = "detail"
-    description = "Displays the raw object"
-    aliases = {"d"}
 
 
 class ShowRegistry(Command):

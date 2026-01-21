@@ -27,36 +27,7 @@ class Show(Command):
         return
     
 
-def _show_context(session: Session, parsed_command: ParsedCommand):
-    """Displays the active head context"""
-    kwargs = parsed_command.kwargs
-    if "all" in kwargs:
-        for head in session.heads.values():
-            session.io.pwrite(head.context, title=f"{head.get_name()} Context")
-        session.io.write(footer=True)
-        return
 
-    # Default Behavior
-
-    if session.active_head:
-        session.io.pwrite(session.active_head.context, title=f"{session.active_head.get_name()} Context", footer=True)
-        return
-    
-    session.io.write("Cannot display Context: No active head")
-
-
-class ShowContext(Command):
-    """Command to display information about the current session"""
-    name = "show context"
-    description = "Displays information about the current session"
-    args = None
-    kwargs = {"all", "active-head"}
-    help = ""
-    required_context = {}
-
-    def execute(self, session: Session, parsed_command: ParsedCommand):
-        _show_context(session, parsed_command)
-        return
     
 
 def _show_history(session: Session, parsed_command: ParsedCommand):
