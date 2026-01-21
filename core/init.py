@@ -52,10 +52,10 @@ def _search_directory(session: Session, directory: str) -> _DirectoryData:
     directories = _resolve_directories(directory)
 
     for package_name in directories:
+        session.io.write(f"Importing {package_name}")
         package_name = str(package_name).replace("/", ".")
         try:
             pkg = import_module(package_name)
-            print(pkg)
         except ModuleNotFoundError as e:
             raise RegistrationError(f"Package not found: '{package_name}'. ({e})")
         
@@ -128,8 +128,6 @@ def _register_commands(session: Session, data: _DirectoryData, registry: Command
             registry.register_alias(alias)
 
     
-    
-
 def init(session: Session):
     """Initialize the session"""
 

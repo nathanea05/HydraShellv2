@@ -77,8 +77,10 @@ class IO:
         print("\n")
 
 
-    def write(self, message: str = None, footer: bool = False) -> None:
+    def write(self, message: str = None, title: str = None, footer: bool = False) -> None:
         """Prints a message to the terminal"""
+        if title:
+            self._write_title(title)
         if message:
             print(message)
         if footer:
