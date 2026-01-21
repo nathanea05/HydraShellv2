@@ -3,7 +3,7 @@
 # Library Imports
 from dataclasses import dataclass, field
 import shlex
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 # Local Imports
 from repl.exceptions import ParseError
@@ -12,10 +12,10 @@ from repl.exceptions import ParseError
 @dataclass
 class ParsedCommand:
     """Object representing a parsed command. Contains base command and arguments"""
-    line: str
-    command: str
-    args: list
-    kwargs: dict
+    line: Optional[str] = field(default="")
+    command: Optional[str] = field(default="")
+    args: Optional[list] = field(default_factory=[])
+    kwargs: Optional[dict] = field(default_factory={})
 
 
 

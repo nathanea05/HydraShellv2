@@ -42,6 +42,12 @@ class ActiveHead(Kwarg):
     aliases = {"ah"}
 
 
+class Detail(Kwarg):
+    name = "detail"
+    description = "Displays the raw object"
+    aliases = {"d"}
+
+
 class ShowRegistry(Command):
     """Command to display information about the current session"""
     name = "show registry"

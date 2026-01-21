@@ -7,12 +7,20 @@ from typing import Optional
 # Local Imports
 from core.session import Session
 from core.command import Command
+from core.build_help import build_help
 from repl.parse_command import parse_command, ParsedCommand
 from repl.exceptions import MissingContext, InvalidCommand
 
 
 DEFAULT_PROMPT = "Hydrashell"
 CONDENSED_PROMPT = "≽≽≽"
+
+
+@dataclass
+class _ResolvedCommand:
+    command: Optional[Command] = None
+    parsed_command: Optional[ParsedCommand] = None
+    from_general_reg: Optional[bool] = False
 
 
 @dataclass
@@ -44,22 +52,46 @@ class REPL:
         self.session.history.command.add_raw_command_history(line)
         return line
     
-    def _resolve_command(self, parsed_command: ParsedCommand) -> tuple[Command, ParsedCommand, bool]:
-        """Locates the parsed command in the registry. Returns command and true if found in general_registry. 
-        Updates parsed_command to accommodate multi-word commands"""
-        # Check general registry first
+    def _resolve_command(self, parsed_command: ParsedCommand) -> _ResolvedCommand:
+        """Locates the parsed command in the registry. Prefers longest match, then general registry, then active head registry"""
+        general_command = _ResolvedCommand()
+        head_command = _ResolvedCommand()
+
+        # Check general registry
         command, parsed_command = self.session.general_registry.resolve_parsed(parsed_command)
         if command:
-            return command, parsed_command, True
+            general_command.command = command
+            general_command.parsed_command = parsed_command
+            general_command.from_general_reg = True
         
         # Check active head
         if self.session.active_head:
             command, parsed_command = self.session.active_head.registry.resolve_parsed(parsed_command)
             if command:
-                return command, parsed_command, False
+                head_command.command = command
+                head_command.parsed_command = parsed_command
+                head_command.from_general_reg = False
+
+        # Prefer longest match, then general
+        gcommand = general_command.command
+        hcommand = head_command.command
+
+        if gcommand and hcommand:
+            general_length = len(gcommand.name.split())
+            head_length = len(hcommand.name.split())
+            if head_length > general_length:
+                return head_command
+            else:
+                return general_command
+            
+        if gcommand:
+            return general_command
+        
+        if hcommand:
+            return head_command
         
         # Command does not exist
-        raise InvalidCommand("Command does not exist.")
+        raise InvalidCommand(f"Unknown Command: '{parsed_command.command}'")
         
 
     def _validate_command(self, session: Session, parsed_command: ParsedCommand, command: Command) -> bool:
@@ -108,15 +140,19 @@ class REPL:
         parsed_command = parse_command(line)
 
         # Resolve
-        command, parsed_command, is_general_cmd = self._resolve_command(parsed_command)
+        resolved_command = self._resolve_command(parsed_command)
 
         # Log
         self.session.history.command.add_raw_command_history(line)
         self.session.history.command.add_parsed_command_history(parsed_command)
 
         # Validate
-        validated = self._validate_command(self.session, parsed_command, command)
+        validated = self._validate_command(self.session, resolved_command.parsed_command, resolved_command.command)
 
         # Execute
         if validated:
-            command.execute(self.session, parsed_command)
+            if "help" in resolved_command.parsed_command.kwargs:
+                help_message = build_help(resolved_command.command)
+                self.session.io.write(help_message)
+            else:
+                resolved_command.command.execute(self.session, parsed_command)

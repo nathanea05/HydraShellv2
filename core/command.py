@@ -11,6 +11,7 @@ from repl.parse_command import ParsedCommand
 
 @dataclass
 class Arg:
+    """Defines a Positional Argument for a Command. Atrributes: name, aliases, description"""
     name: str = field(init=False)
     aliases: list[str] = field(default_factory=list)
     description: str = field(init=False)
@@ -18,6 +19,7 @@ class Arg:
 
 @dataclass
 class Kwarg:
+    """Defines a Keyword Argument for a Command. Atrributes: name, aliases, description"""
     name: str = field(init=False)
     aliases: list[str] = field(default_factory=list)
     description: str = field(init=False)

@@ -17,6 +17,8 @@ from core.head import Head
 from core.context import Context
 from core.metadata import Metadata
 
+from general_commands.kwargs.help import HelpKwarg
+
 
 GENERAL_COMMANDS_DIR = "general_commands"
 PLUGINS_DIR = "plugins"
@@ -125,21 +127,26 @@ def _register_commands(session: Session, data: _DirectoryData, registry: Command
         try:
             if isinstance(cmd, Command):
                 # Unpack args and kwargs into dicts
+                new_args = {}
                 if cmd.args:
-                    new_args = {}
                     for arg in cmd.args:
                         if issubclass(arg, Arg):
                             new_arg = arg()
                             new_args[new_arg.name] = new_arg
-                    cmd.args = new_args
+                cmd.args = new_args
 
+
+                new_kwargs = {}
                 if cmd.kwargs:
-                    new_kwargs = {}
                     for kwarg in cmd.kwargs:
                         if issubclass(kwarg, Kwarg):
                             new_kwarg = kwarg()
                             new_kwargs[new_kwarg.name] = new_kwarg
-                    cmd.kwargs = new_kwargs
+                cmd.kwargs = new_kwargs
+
+                # Add --help kwarg
+                help_kwarg = HelpKwarg()
+                cmd.kwargs[help_kwarg.name] = help_kwarg
 
 
                 registry.register_command(cmd)

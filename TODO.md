@@ -1,9 +1,8 @@
 # Priorities
 
--Create arg/kwarg objects and implement w/ command
--Create dynamic help
+-Implement arg/kwarg aliases
 -Argument grouping
--Alias args
+-Allow aliases to be used with args
 -Database w/ sqlite and sqlalchemy (session.services.database)
 -Implement more strict context controls (disallowed context)
 
