@@ -25,67 +25,74 @@ PLUGINS_DIR = "plugins"
 @dataclass
 class _DirectoryData:
     """Class to store data found in a Hydrashell directory"""
-    commands: Optional[list] = field(default_factory=list)
-    aliases: Optional[list] = field(default_factory=list)
+    commands: Optional[list[Command]] = field(default_factory=list)
+    aliases: Optional[list[Alias]] = field(default_factory=list)
     context: Optional[Context] = field(default_factory=Context)
     metadata: Optional[Metadata] = field(default_factory=Metadata)
 
 
+
+def _resolve_directories(root_dir) -> set[Path]:
+    """Returns all directories found in root_dir, including the root"""
+    root_path = Path(root_dir)
+
+    directories = []
+
+    for dir_path in (root_path, *root_path.iterdir()):
+        if dir_path.is_dir() and not dir_path.name.startswith("__"):
+            directories.append(dir_path)
+
+    return set(directories)
+
+
 def _search_directory(session: Session, directory: str) -> _DirectoryData:
-    """Searches a directory for objects necessary for Hydrashell init"""
-    directory = str(directory).replace("/", ".")
+    """Recursively imports modules under `package_name` and extracts Commands/Aliases/Context/Metadata."""
+
     directory_data = _DirectoryData()
+    directories = _resolve_directories(directory)
 
-    try:
-        pkg = import_module(directory)
-    except ModuleNotFoundError:
-        raise RegistrationError(f"Directory not found: '{directory}'.")
-
-
-    for modinfo in pkgutil.walk_packages(pkg.__path__, pkg.__name__ + "."):
+    for package_name in directories:
+        package_name = str(package_name).replace("/", ".")
+        try:
+            pkg = import_module(package_name)
+            print(pkg)
+        except ModuleNotFoundError as e:
+            raise RegistrationError(f"Package not found: '{package_name}'. ({e})")
+        
+        for modinfo in pkgutil.walk_packages(pkg.__path__, pkg.__name__ + "."):
             try:
                 module = import_module(modinfo.name)
             except Exception as e:
-                raise RegistrationError(f"Failed to import commands from directory '{directory}': {e}")
-            
+                raise RegistrationError(
+                    f"Failed to import commands from package '{package_name}' (module '{modinfo.name}'): {e}"
+                )
+
             for obj in module.__dict__.values():
                 if not isinstance(obj, type):
                     continue
-                if obj is Command or obj is Alias: # skip the parent class
+                if obj in (Command, Alias, Context, Metadata):
                     continue
 
                 if issubclass(obj, Command):
-                    cmd_cls: Type[Command] = obj
-
                     try:
-                        cmd = cmd_cls()
+                        directory_data.commands.append(obj())
                     except Exception as e:
-                        session.io.warn(f"Failed to instantiate '{cmd_cls.__name__}' from '{modinfo.name}': {e}")
-                        continue
-                    directory_data.commands.append(cmd)
+                        session.io.warn(f"Failed to instantiate '{obj.__name__}' from '{modinfo.name}': {e}")
 
-                if issubclass(obj, Alias):
-                    alias_cls: Type[Alias] = obj
-
+                elif issubclass(obj, Alias):
                     try:
-                        alias = alias_cls()
+                        directory_data.aliases.append(obj())
                     except Exception as e:
-                        session.io.warn(f"Failed to instantiate '{alias_cls.__name__}' from '{modinfo.name}': {e}")
-                        continue
-                    directory_data.aliases.append(alias)
+                        session.io.warn(f"Failed to instantiate '{obj.__name__}' from '{modinfo.name}': {e}")
 
-                if issubclass(obj, Context):
-                    ctx_cls: Type[Context] = obj
-
+                elif issubclass(obj, Context):
                     try:
-                        ctx = ctx_cls()
+                        directory_data.context = obj()
                     except Exception as e:
-                        session.io.warn(f"Failed to instantiate context from '{modinfo.name}': {e}")
-                    directory_data.context = ctx
+                        session.io.warn(f"Failed to instantiate context '{obj.__name__}' from '{modinfo.name}': {e}")
 
-                if issubclass(obj, Metadata):
+                elif issubclass(obj, Metadata):
                     directory_data.metadata = obj
-
 
     return directory_data
 
@@ -133,4 +140,4 @@ def init(session: Session):
     # Register heads
     plugins_path = Path(PLUGINS_DIR)
     for plugin_dir in plugins_path.iterdir():
-        _initialize_head(session, plugin_dir)
+        _initialize_head(session, str(plugin_dir))

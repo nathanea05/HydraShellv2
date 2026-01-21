@@ -1,7 +1,6 @@
 # Priorities
 
 -Recursive searching in plugin directories
--debug alias registration/execution
 -Create dynamic help
 -Argument grouping
 -Database w/ sqlite and sqlalchemy (session.services.database)
@@ -11,7 +10,6 @@
 
 -Tab Completion
 -Context sensitive help
-
 
 
 # Long Term

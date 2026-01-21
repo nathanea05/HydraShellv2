@@ -10,15 +10,7 @@ from repl.exceptions import InvalidCommand
 
 def _show(session: Session, parsed_command: ParsedCommand):
     """Command to show information about the current session"""
-    args = parsed_command.args
-    if "registry" in parsed_command.args:
-        if session.active_head:
-            session.io.pwrite(session.active_head.registry)
-        session.io.pwrite(session.general_registry)
-    if "heads" in parsed_command.args:
-        session.io.pwrite(session.heads)
-    if "history" in args:
-        session.io.pwrite(session.history.command_history.parsed_commands)
+    raise InvalidCommand("Missing args. Try show --help")
 
 
 class Show(Command):
@@ -109,9 +101,26 @@ def _show_history(session: Session, parsed_command: ParsedCommand):
     args = parsed_command.args
     kwargs = parsed_command.kwargs
 
+    if not args and not kwargs:
+        raise InvalidCommand(f"Missing args. Try show history --help")
+
     if "parsed" in args:
         session.io.pwrite(session.history.command.parsed_commands)
     if "command" in args:
         session.io.pwrite(session.history.command.raw_commands)
 
     return
+
+
+class ShowHistory(Command):
+    """Command to display information about the current session"""
+    name = "show history"
+    description = "Displays information about the current session"
+    args = {"parsed", "command"}
+    kwargs = {"all", "active-head"}
+    help = ""
+    required_context = {}
+
+    def execute(self, session: Session, parsed_command: ParsedCommand):
+        _show_history(session, parsed_command)
+        return

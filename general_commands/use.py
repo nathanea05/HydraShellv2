@@ -19,7 +19,7 @@ def _use(session: Session, parsed_command: ParsedCommand):
     # Set active head
     target_head = session.heads.get(target, None)
     if target_head and not kwargs.get("active-head", False):
-        session.history.head_history.add_history(session.active_head)
+        session.history.head.add_history(session.active_head)
         session.set_active_head(target_head)
         return
 
