@@ -10,12 +10,26 @@ from repl.parse_command import ParsedCommand
 
 
 @dataclass
+class Arg:
+    name: str = field(init=False)
+    aliases: list[str] = field(default_factory=list)
+    description: str = field(init=False)
+
+
+@dataclass
+class Kwarg:
+    name: str = field(init=False)
+    aliases: list[str] = field(default_factory=list)
+    description: str = field(init=False)
+
+
+@dataclass
 class Command:
     name: str = field(init=False)
     description: str = field(init=False, default="")
-    args: list = field(init=False)
-    kwargs: dict = field(init=False)
-    required_context: set = field(init=False, default=set)
+    args: dict[str, Arg] = field(init=False)
+    kwargs: dict[str, Arg] = field(init=False)
+    required_context: set = field(default_factory=set)
     help: str = field(init=False, default="")
 
 

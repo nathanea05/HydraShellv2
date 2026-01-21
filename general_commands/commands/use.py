@@ -2,8 +2,10 @@
 
 
 # Local Imports
-from core.command import Command
+from core.command import Command, Arg, Kwarg
 from core.session import Session
+from general_commands.args.wildcard import WildcardArg
+from general_commands.kwargs.wildcard import WildcardKwarg
 from repl.parse_command import ParsedCommand
 from repl.exceptions import InvalidCommand
 
@@ -30,12 +32,19 @@ def _use(session: Session, parsed_command: ParsedCommand):
     
     raise InvalidCommand(f"Head not found: '{target}'. Use command 'show heads' to view available heads.")
 
+
+class ActiveHead(Kwarg):
+    name = "active-head"
+    aliases = {"ah"}
+    description = "Ensures 'use' command will apply within the active head, prevents head-switching (In case external head name matches internal command)"
+
+
 class Use(Command):
     """Command to select the active head"""
     name = "use"
     description = "Select the active head"
-    args = "*" # wildcard
-    kwargs = {"active-head"}
+    args = {WildcardArg}
+    kwargs = {ActiveHead}
     required_context = {}
     help = ""
 

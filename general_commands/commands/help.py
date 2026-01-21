@@ -18,30 +18,32 @@ Each Head contains it's own set of commands and context heirarchy.
 # Navigation
 Use the following commands to navigate Hydrashell:
 
--use <target>: Enter head configuration mode, or set context within the active head
--exit: Exit one layer in the active_head context heirarchy
--end: Return to Hydrashell root
+-use <target>:          Enter head configuration mode, or set context within 
+                        the active head
+-exit:                  Exit one layer in the active_head context heirarchy
+-end:                   Return to Hydrashell root
 
 
 # Show
-The 'show' command doesn't do anything by itself, but it's subcommands are used to view
-information about the current Hydrashell session. For example:
+The 'show' command doesn't do anything by itself, but its subcommands are used 
+to view information about the current Hydrashell session. For example:
 
--show registry: Shows the command registry
--show history command: Shows the history of commands entered by the user
--show context: Shows the context of the active head
+-show registry:         Shows the command registry
+-show history command:  Shows the history of commands entered by the user
+-show context:          Shows the context of the active head
 
 
 # Program Management
 The following commands are used to quit and restart the program:
 
--quit: Terminates the program
--restart, re: Restarts the program
+-quit:                  Terminates the program
+-restart, re:           Restarts the program
 
 
 # Help
-Hydrashell has a builtin help system that is very simple to use. Enter 'help' to see
-this page. Enter '<command> --help' to see information about a specific command.
+Hydrashell has a builtin help system that is very simple to use. Enter 'help' 
+to see this page. Enter '<command> --help' to see information about a specific 
+command.
 
 Examples:
 -show --help

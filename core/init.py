@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from core.session import Session
 from core.command_registry import CommandRegistry
 from core.exceptions import RegistrationError
-from core.command import Command, Alias
+from core.command import Command, Alias, Arg, Kwarg
 from core.head import Head
 from core.context import Context
 from core.metadata import Metadata
@@ -25,24 +25,24 @@ PLUGINS_DIR = "plugins"
 @dataclass
 class _DirectoryData:
     """Class to store data found in a Hydrashell directory"""
+    source: Optional[str] = None
     commands: Optional[list[Command]] = field(default_factory=list)
     aliases: Optional[list[Alias]] = field(default_factory=list)
     context: Optional[Context] = field(default_factory=Context)
     metadata: Optional[Metadata] = field(default_factory=Metadata)
 
 
-
 def _resolve_directories(root_dir) -> set[Path]:
-    """Returns all directories found in root_dir, including the root"""
+    """Returns all directories found in root_dir, including the root."""
     root_path = Path(root_dir)
 
-    directories = []
+    directories = set()
 
-    for dir_path in (root_path, *root_path.iterdir()):
-        if dir_path.is_dir() and not dir_path.name.startswith("__"):
-            directories.append(dir_path)
+    for path in (root_path, *root_path.rglob("*")):
+        if path.is_dir() and not path.name.startswith("__"):
+            directories.add(path)
 
-    return set(directories)
+    return directories
 
 
 def _search_directory(session: Session, directory: str) -> _DirectoryData:
@@ -50,6 +50,8 @@ def _search_directory(session: Session, directory: str) -> _DirectoryData:
 
     directory_data = _DirectoryData()
     directories = _resolve_directories(directory)
+
+    directory_data.source = directory
 
     for package_name in directories:
         session.io.write(f"Importing {package_name}")
@@ -120,8 +122,30 @@ def _initialize_head(session: Session, directory: str):
 def _register_commands(session: Session, data: _DirectoryData, registry: CommandRegistry):
     """Registers the commands, aliases, and context in a directory"""
     for cmd in data.commands:
-        if isinstance(cmd, Command):
-            registry.register_command(cmd)
+        try:
+            if isinstance(cmd, Command):
+                # Unpack args and kwargs into dicts
+                if cmd.args:
+                    new_args = {}
+                    for arg in cmd.args:
+                        if issubclass(arg, Arg):
+                            new_arg = arg()
+                            new_args[new_arg.name] = new_arg
+                    cmd.args = new_args
+
+                if cmd.kwargs:
+                    new_kwargs = {}
+                    for kwarg in cmd.kwargs:
+                        if issubclass(kwarg, Kwarg):
+                            new_kwarg = kwarg()
+                            new_kwargs[new_kwarg.name] = new_kwarg
+                    cmd.kwargs = new_kwargs
+
+
+                registry.register_command(cmd)
+        except Exception as e:
+            session.io.warn(f"Failed to initialize command '{cmd.name}' from '{data.source}': {e}")
+
     
     for alias in data.aliases:
         if isinstance(alias, Alias):
