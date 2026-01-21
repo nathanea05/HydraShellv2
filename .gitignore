@@ -15,4 +15,5 @@ env/
 .DS_Store
 
 # head folders
-plugins/
+plugins/*
+!plugins/.gitkeep
