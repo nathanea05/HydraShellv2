@@ -17,10 +17,10 @@ from core.head import Head
 from core.context import Context
 from core.metadata import Metadata
 
-from general_commands.kwargs.help import HelpKwarg
+from commands.kwargs.help import HelpKwarg
 
 
-GENERAL_COMMANDS_DIR = "general_commands"
+GENERAL_COMMANDS_DIR = "commands"
 PLUGINS_DIR = "plugins"
 
 

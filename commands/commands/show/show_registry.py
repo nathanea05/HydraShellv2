@@ -6,7 +6,7 @@ from core.command import Command, Arg, Kwarg
 from core.session import Session
 from repl.parse_command import ParsedCommand
 from repl.exceptions import InvalidCommand
-from general_commands.commands.show.args import All, ActiveHead, Detail
+from commands.commands.show.args import All, ActiveHead, Detail
 
 
 def _show_registry(session: Session, parsed_command: ParsedCommand):

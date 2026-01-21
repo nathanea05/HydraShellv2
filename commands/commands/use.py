@@ -4,8 +4,8 @@
 # Local Imports
 from core.command import Command, Arg, Kwarg
 from core.session import Session
-from general_commands.args.wildcard import WildcardArg
-from general_commands.kwargs.wildcard import WildcardKwarg
+from commands.args.wildcard import WildcardArg
+from commands.kwargs.wildcard import WildcardKwarg
 from repl.parse_command import ParsedCommand
 from repl.exceptions import InvalidCommand
 

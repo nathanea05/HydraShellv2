@@ -1,6 +1,6 @@
 # Library Imports
 from dataclasses import dataclass, field
-from getpass import getuser
+from getpass import getuser, getpass
 
 # Local Imports
 
@@ -9,3 +9,7 @@ from getpass import getuser
 class Authentication:
     # Class for managing user authentication
     username = getuser()
+
+    def get_api_key():
+        key = getpass("Enter your API key here: ")
+        return key
