@@ -1,20 +1,28 @@
 # Priorities
 
--Implement arg/kwarg aliases
--Allow aliases to be used with args
+Finish readme
 
--Argument grouping
--Database w/ sqlite and sqlalchemy (session.services.database)
--Implement more strict context controls (disallowed context)
+Implement arg/kwarg aliases
 
+Allow aliases to be used with args
+
+Argument grouping
+
+Database w/ sqlite and sqlalchemy (session.services.database)
+
+Implement more strict context controls (disallowed context)
+
+Track command statuses and implement output piping
 
 # Conveniences
 
--Tab Completion
--Context sensitive help
+Tab Completion
+
+Context sensitive help
 
 
 # Long Term
 
--Implement task scheduling
--User authorization/SSO
+Implement task scheduling
+
+User authorization/SSO

@@ -63,7 +63,7 @@ class IO:
         print(f"[WARN] {message}")
 
 
-    def _write_title(self, title: str):
+    def write_title(self, title: str):
         total_filler = TERMINAL_WIDTH - len(title)
         total_filler -= 2
         half_filler = (total_filler / 2)
@@ -71,28 +71,37 @@ class IO:
         print(f"\n\n{FILLER * half_filler} {title} {FILLER * half_filler}\n")
 
     
-    def _write_footer(self):
-        print("\n")
+    def write_footer(self, space=False):
+        if space:
+            self.newline()
         print(FILLER * TERMINAL_WIDTH)
-        print("\n")
+        if space:
+            self.newline()
 
 
     def write(self, message: str = None, title: str = None, footer: bool = False) -> None:
         """Prints a message to the terminal"""
         if title:
-            self._write_title(title)
+            self.write_title(title)
         if message:
             print(message)
         if footer:
-            self._write_footer()
+            self.write_footer()
 
 
     def pwrite(self, message: str, title: str = None, footer: bool = False) -> None:
         """Prints a formatted message to the terminal (pprint)"""
         if title:
-            self._write_title(title)
+            self.write_title(title)
 
         pprint(message)
 
         if footer:
-            self._write_footer()
+            self.newline()
+            self.write_footer()
+            self.newline()
+
+    
+    def newline(self):
+        "Prints blank line (spacer)"
+        print("")

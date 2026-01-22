@@ -14,9 +14,8 @@ class ParsedCommand:
     """Object representing a parsed command. Contains base command and arguments"""
     line: Optional[str] = field(default="")
     command: Optional[str] = field(default="")
-    args: Optional[list] = field(default_factory=[])
-    kwargs: Optional[dict] = field(default_factory={})
-
+    args: list[str] = field(default_factory=list)
+    kwargs: dict[str, str|bool] = field(default_factory=dict)
 
 
 def parse_command(line: str) -> ParsedCommand:

@@ -51,7 +51,6 @@ class REPL:
         prompt = f"{base_prompt}> "
 
         line = self.session.io.safe_input(prompt)
-        self.session.history.command.add_raw_command_history(line)
         
         if line is None:
             return None
@@ -149,20 +148,24 @@ class REPL:
                 # Resolve
                 resolved_command = self._resolve_command(parsed_command)
 
+                # Validate
+                validated = self._validate_command(self.session, resolved_command.parsed_command, resolved_command.command)
+                if not validated:
+                    self.session.io.warn("Command failed validation")
+                    continue
+
                 # Log
                 self.session.history.command.add_raw_command_history(line)
                 self.session.history.command.add_parsed_command_history(parsed_command)
 
-                # Validate
-                validated = self._validate_command(self.session, resolved_command.parsed_command, resolved_command.command)
-
+                # Show Help
+                if "help" in resolved_command.parsed_command.kwargs:
+                    help_message = build_help(resolved_command.command)
+                    self.session.io.write(help_message)
+                    continue
+                
                 # Execute
-                if validated:
-                    if "help" in resolved_command.parsed_command.kwargs:
-                        help_message = build_help(resolved_command.command)
-                        self.session.io.write(help_message)
-                    else:
-                        resolved_command.command.execute(self.session, parsed_command)
+                resolved_command.command.execute(self.session, parsed_command)
 
 
             except InvalidCommand as e:
