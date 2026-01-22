@@ -60,7 +60,8 @@ def build_help(command: Command) -> str:
 
     # Build sections
     lines: list[str] = []
-    lines.append(f"{name} — Help")
+    lines.append("COMMAND")
+    lines.append(f"  {name}")
     lines.append("")
     lines.append("USAGE")
     lines.append(f"  {usage}")

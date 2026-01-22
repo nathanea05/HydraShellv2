@@ -52,7 +52,8 @@ Examples:
 
 def _help(session: Session, parsed_command: ParsedCommand):
     """Docstring for cmd function"""
-    session.io.write(message=HELP_PAGE, title="Hydrashell Help", footer=True)
+    session.io.write(message=HELP_PAGE, title="Hydrashell Help")
+    session.io.write_footer(space=True)
 
 
 class Help(Command):

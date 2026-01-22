@@ -169,4 +169,5 @@ def init(session: Session):
     # Register heads
     plugins_path = Path(PLUGINS_DIR)
     for plugin_dir in plugins_path.iterdir():
-        _initialize_head(session, str(plugin_dir))
+        if plugin_dir.is_dir():
+            _initialize_head(session, str(plugin_dir))

@@ -161,7 +161,8 @@ class REPL:
                 # Show Help
                 if "help" in resolved_command.parsed_command.kwargs:
                     help_message = build_help(resolved_command.command)
-                    self.session.io.write(help_message)
+                    self.session.io.write(help_message, title=f"{resolved_command.command.name} Help Page", footer=True)
+                    self.session.io.newline()
                     continue
                 
                 # Execute

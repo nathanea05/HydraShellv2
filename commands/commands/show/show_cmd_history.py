@@ -49,9 +49,9 @@ def _show_command_history(session: Session, parsed_command: ParsedCommand):
                 session.io.write(f"\tKeyword Args:")
                 for k, v in cmd.kwargs.items():
                     session.io.write(f"\t\t-{k}:\t{v}")
-            session.io.write("")
+            session.io.newline()
         session.io.write_footer()
-        session.io.write("")
+        session.io.newline()
 
         return
     

@@ -12,7 +12,7 @@ Database w/ sqlite and sqlalchemy (session.services.database)
 
 Implement more strict context controls (disallowed context)
 
-Track command statuses and implement output piping
+Track command statuses and implement output piping (every command returns a string)
 
 # Conveniences
 
