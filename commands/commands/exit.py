@@ -5,7 +5,7 @@
 from core.command import Command
 from core.session import Session
 from repl.parse_command import ParsedCommand
-from repl.exceptions import InvalidCommand, ExitError
+from repl.exceptions import InvalidCommand, ExitHead
 
 
 def _exit(session: Session, parsed_command: ParsedCommand):
@@ -14,7 +14,7 @@ def _exit(session: Session, parsed_command: ParsedCommand):
         if session.active_head:
             session.active_head.context.exit()
             return
-    except ExitError:
+    except ExitHead:
         session.remove_active_head()
         return
     raise InvalidCommand("Cannot exit any further. Enter 'quit' to exit the program.")

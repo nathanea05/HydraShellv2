@@ -21,9 +21,5 @@ class Context:
         raise ContextImplementationError("Developer Error: get_prompt not implemented for this head.")
     
 
-    def use(self, session, parsed_command: ParsedCommand):
-        raise NotImplementedError("Developer Error: 'use' not implemented for this head.")
-    
-
     def exit(self):
         raise NotImplementedError("Developer Error: 'exit' not implemented for this head. Use 'end' to return to Hydrashell root.")

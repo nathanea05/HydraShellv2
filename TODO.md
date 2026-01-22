@@ -14,6 +14,8 @@ Implement more strict context controls (disallowed context)
 
 Track command statuses and implement output piping (every command returns a string)
 
+Initialization process for each head (run head.init use <head> first entered)
+
 # Conveniences
 
 Tab Completion

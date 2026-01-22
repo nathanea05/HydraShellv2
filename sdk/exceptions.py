@@ -1,2 +1,2 @@
-from repl.exceptions import InvalidCommand, ExitError
+from repl.exceptions import InvalidCommand, ExitHead
 from core.exceptions import NotImplementedError

@@ -106,7 +106,7 @@ class REPL:
             ctx = getattr(self.session.active_head, "context", None)
             if ctx:
                 for req in command.required_context:
-                    if not getattr(ctx, req, None):
+                    if not getattr(ctx, req):
                         raise MissingContext(f"Cannot execute command. Missing required context: '{req}'.")
 
 

@@ -19,15 +19,18 @@ def _use(session: Session, parsed_command: ParsedCommand):
     target = target.strip().lower()
 
     # Set active head
-    target_head = session.heads.get(target, None)
-    if target_head and not kwargs.get("active-head", False):
+    head = session.heads.get(target, None)
+    if head:
         session.history.head.add_history(session.active_head)
-        session.set_active_head(target_head)
-        return
-
-    # Defer to active head
-    if session.active_head:
-        session.active_head.context.use(session, parsed_command)
+        session.set_active_head(head) # Set active head, then initialize
+        if not head.initialized:
+            try:
+                head.init(session)
+                head.initialized = True
+            except Exception as e:
+                session.io.warn(f"Failed to initialize head {session.active_head.name}: {e}")
+                session.remove_active_head()
+                head.initialized = False
         return
     
     raise InvalidCommand(f"Head not found: '{target}'. Use command 'show heads' to view available heads.")

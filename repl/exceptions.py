@@ -20,5 +20,5 @@ class ParseError(Exception):
 class MissingContext(Exception):
     """Raised when a command is missing context"""
 
-class ExitError(Exception):
-    """Raised when the user tries to exit but cannot"""
+class ExitHead(Exception):
+    """Raised when the user enters 'exit' from head root"""

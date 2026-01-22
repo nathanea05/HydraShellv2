@@ -7,6 +7,7 @@ from typing import Optional
 # Local Imports
 from core.command_registry import CommandRegistry
 from core.context import Context
+from core.head_init import HeadInit
 
 
 @dataclass
@@ -21,6 +22,8 @@ class Head:
     name: Optional[str] = field(default_factory=str)
     registry: Optional[CommandRegistry] = field(default_factory=CommandRegistry)
     context: Optional[Context] = field(default_factory=Context)
+    head_init: Optional[HeadInit] = field(default_factory=HeadInit)
+    initialized: Optional[bool] = False
 
     # Metadata
     display_name: Optional[str] = None
@@ -32,3 +35,7 @@ class Head:
         if self.display_name:
             return self.display_name
         return self.name
+    
+    def init(self, session):
+        """Initializes the head"""
+        self.head_init.init(session)

@@ -67,9 +67,9 @@ def _show_registry(session: Session, parsed_command: ParsedCommand):
     # Identify which registries to print
     while True:
         if "all" in kwargs:
+            registries_to_print["General"] = session.general_registry
             for head in session.heads.values():
                 registries_to_print[head.get_name()] = head.registry
-            registries_to_print["General"] = session.general_registry
             break
 
         if "active-head" in kwargs:
@@ -79,9 +79,9 @@ def _show_registry(session: Session, parsed_command: ParsedCommand):
             break
 
         # Default behaviour
+        registries_to_print["General"] = session.general_registry
         if session.active_head:
             registries_to_print[session.active_head.get_name()] = session.active_head.registry
-        registries_to_print["General"] = session.general_registry
         break
 
     # Print registries

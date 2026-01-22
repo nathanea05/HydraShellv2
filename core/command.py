@@ -31,7 +31,7 @@ class Command:
     description: str = field(init=False, default="")
     args: dict[str, Arg] = field(init=False)
     kwargs: dict[str, Kwarg] = field(init=False)
-    required_context: set = field(default_factory=set)
+    required_context: set = field(init=False, default=set)
     help: str = field(init=False, default="")
 
 

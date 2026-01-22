@@ -10,6 +10,6 @@ class Authentication:
     # Class for managing user authentication
     username = getuser()
 
-    def get_api_key():
+    def get_api_key(self):
         key = getpass("Enter your API key here: ")
         return key

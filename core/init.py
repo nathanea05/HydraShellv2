@@ -16,7 +16,7 @@ from core.command import Command, Alias, Arg, Kwarg
 from core.head import Head
 from core.context import Context
 from core.metadata import Metadata
-
+from core.head_init import HeadInit
 from commands.kwargs.help import HelpKwarg
 
 
@@ -32,6 +32,7 @@ class _DirectoryData:
     aliases: Optional[list[Alias]] = field(default_factory=list)
     context: Optional[Context] = field(default_factory=Context)
     metadata: Optional[Metadata] = field(default_factory=Metadata)
+    head_init: Optional[HeadInit] = field(default_factory=HeadInit)
 
 
 def _resolve_directories(root_dir) -> set[Path]:
@@ -98,6 +99,9 @@ def _search_directory(session: Session, directory: str) -> _DirectoryData:
                 elif issubclass(obj, Metadata):
                     directory_data.metadata = obj
 
+                elif issubclass(obj, HeadInit):
+                    directory_data.head_init = obj()
+
     return directory_data
 
 
@@ -109,8 +113,9 @@ def _initialize_head(session: Session, directory: str):
     # Register Commands
     _register_commands(session, directory_data, head.registry)
 
-    # Register Context
+    # Register Context and init
     head.context = directory_data.context
+    head.head_init = directory_data.head_init
 
     # Register Metadata
     metadata = directory_data.metadata
