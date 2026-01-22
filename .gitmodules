@@ -1,0 +1,3 @@
+[submodule "plugins/meraki"]
+	path = plugins/meraki
+	url = https://github.com/nathanea05/hydrashell-meraki.git
