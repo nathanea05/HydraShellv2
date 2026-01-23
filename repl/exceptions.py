@@ -19,6 +19,9 @@ class ParseError(Exception):
 
 class MissingContext(Exception):
     """Raised when a command is missing context"""
+    
+class InvalidContext(Exception):
+    """Raised when context validation for a command fails"""
 
 class ExitHead(Exception):
     """Raised when the user enters 'exit' from head root"""

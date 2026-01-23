@@ -9,7 +9,7 @@ from core.session import Session
 from core.command import Command
 from core.build_help import build_help
 from repl.parse_command import parse_command, ParsedCommand
-from repl.exceptions import InvalidCommand, ParseError, MissingContext
+from repl.exceptions import InvalidCommand, ParseError, MissingContext, InvalidContext, ExitHead
 from core.exceptions import NotImplementedError, ContextImplementationError
 
 
@@ -105,9 +105,24 @@ class REPL:
         if session.active_head:
             ctx = getattr(self.session.active_head, "context", None)
             if ctx:
-                for req in command.required_context:
-                    if not getattr(ctx, req):
-                        raise MissingContext(f"Cannot execute command. Missing required context: '{req}'.")
+                if command.required_context:
+                    for req in command.required_context:
+                        if not getattr(ctx, req):
+                            raise MissingContext(f"Cannot execute command. Missing required context: '{req}'.")
+
+                if command.requires_one_of:
+                    matched_reqs = 0
+                    for req in command.requires_one_of:
+                        if getattr(ctx, req):
+                            matched_reqs += 1
+                    if matched_reqs != 1:
+                        raise InvalidContext(f"Command requires exactly 1 (One) of the following requirements to be met: {" ".join(command.requires_one_of)}. Matched: {matched_reqs}")
+                    
+                if command.context_blacklist:
+                    for req in command.context_blacklist:
+                        if getattr(ctx, req):
+                            raise InvalidContext(f"Context {req} is not allowed for this command.")
+
 
 
         # VALIDATE USER AUTHORIZATION
@@ -178,11 +193,17 @@ class REPL:
             except MissingContext as e:
                 self.session.io.warn(e)
 
+            except InvalidContext as e:
+                self.session.io.warn(e)
+
             except NotImplementedError as e:
                 self.session.io.warn(e)
 
             except ContextImplementationError as e:
                 self.session.io.warn(e)
+                self.session.remove_active_head()
+
+            except ExitHead as e:
                 self.session.remove_active_head()
 
             except EOFError:
